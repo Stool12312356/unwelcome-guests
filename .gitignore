@@ -1,6 +1,7 @@
 # Dependencies and production output
 node_modules/
 dist/
+release/
 
 # Logs and local tool state
 *.log

@@ -27,7 +27,7 @@ Production-сборка находится в `dist/`, preview по умолча
 
 **GitHub Pages.** Workflow `.github/workflows/pages.yml` запускает тесты и сборку при каждом push в `main`. Один раз включите: репозиторий → Settings → Pages → Source: **GitHub Actions**. Ссылка будет вида `https://<логин>.github.io/<репозиторий>/`.
 
-**itch.io.** Запустите `npm run build`, заархивируйте **содержимое** `dist/` в zip (чтобы `index.html` лежал в корне архива), создайте проект типа *HTML*, загрузите zip, отметьте *This file will be played in the browser*, размер окна 1280×720 и включите *Fullscreen button*. Pointer Lock в iframe itch.io работает после клика по игре.
+**itch.io.** Запустите `npm run build`, затем `skpy scripts/pack-itch.py` (или любой Python 3: `python scripts/pack-itch.py`): скрипт создаст `release/unwelcome-guests-itch.zip` с `index.html` в корне архива. Создайте проект типа *HTML*, загрузите zip, отметьте *This file will be played in the browser*, размер окна 1280×720 и включите *Fullscreen button*. Pointer Lock в iframe itch.io работает после клика по игре.
 
 Видео на 30 секунд можно записать позже: старт → окно с городом → смена инструментов 1–6 с эффектами → разбитая мебель → победа.
 
