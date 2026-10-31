@@ -38,7 +38,8 @@ test.after(disposeTemplates);
 
 test('CC0-модели и текстуры локальны, зависимости присутствуют, SHA-256 совпадает', async () => {
   assert.equal(manifest.license, 'CC0-1.0');
-  assert.equal(Object.keys(manifest.models).length, 9);
+  assert.equal(Object.keys(manifest.models).length, 10);
+  assert.ok(models.has('facade'));
   for (const file of manifest.files) {
     const bytes = await readFile(path.join(root, file.path));
     assert.equal(bytes.length, file.bytes, file.path);
@@ -78,7 +79,9 @@ test('raycast по реальным импортированным поверх�
   for (const kind of ['tv', 'vase', 'chair', 'table', 'box', 'sofa', 'cabinet']) {
     const sim = createSimulation({ seed: 321 });
     let state = sim.getState();
+    for (let seed = 0; seed < 100 && !state.props.some(p => p.kind === kind); seed++) state = sim.restart({ seed });
     const prop = state.props.find(p => p.kind === kind);
+    assert.ok(prop, `генератор содержит ${kind}`);
     const scene = new THREE.Scene();
     const world = createWorld(THREE, scene, state, assets);
     const target = world.getTargets().find(t => t.userData.targetId === prop.id);
@@ -126,7 +129,8 @@ test('restart не дублирует импортированные цели и
 test('мебель блокирует ходьбу, разрушенная освобождает место; коридор и двери свободны', () => {
   for (let seed = 0; seed < 30; seed++) {
     const state = createSimulation({ seed }).getState();
-    for (let x = -8.6; x <= 8.6; x += 0.15) for (const z of [-0.8, 0, 0.8]) assert.ok(canOccupy(state, x, z));
+    for (let x = -8.6; x <= 8.6; x += 0.15) assert.ok(canOccupy(state, x, 0));
+    for (const door of state.layout.doors) for (const offset of [-0.8, 0, 0.8]) assert.ok(canOccupy(state, door.x, door.z + offset));
     for (const prop of state.props) {
       assert.equal(canOccupy(state, prop.x, prop.z), false, prop.kind);
       prop.broken = true;

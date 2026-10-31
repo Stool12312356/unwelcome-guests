@@ -370,6 +370,7 @@ export function createGame({ root, assets = null }) {
       if (!active()) return;
       attack(); this.advance(0.1); inspectionFrame = true;
     },
+    freeze() { inspectionFrame = true; },
     unfreeze() { inspectionFrame = false; lastTime = performance.now(); },
     /** Ускорение времени: прогоняет настоящую симуляцию шагами по 0.05 с. */
     skip(seconds) {

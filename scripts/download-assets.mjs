@@ -9,6 +9,7 @@ const models = {
   chair: 'painted_wooden_chair_01', table: 'wooden_table_02', tv: 'Television_01',
   vase: 'ceramic_vase_01', box: 'cardboard_box_01', sofa: 'sofa_02',
   cabinet: 'painted_wooden_cabinet', lamp: 'modern_ceiling_lamp_01', hammer: 'wooden_hammer_01',
+  facade: 'modular_urban_apartments_facade',
 };
 const surfaces = { floor: 'old_wood_floor', plaster: 'grey_plaster_03' };
 const hash = (bytes, algorithm = 'sha256') => createHash(algorithm).update(bytes).digest('hex');

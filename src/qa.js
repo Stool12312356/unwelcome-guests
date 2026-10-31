@@ -63,6 +63,14 @@ export function mountQA(root, qa) {
     ['Окно справа', () => { qa.teleport(-5.45, -4.5); qa.face(0, 0.08); }],
     ['Использовать и стоп-кадр', () => qa.captureUse()],
     ['Снять стоп-кадр', () => qa.unfreeze()],
+    ['Стоп-кадр осмотра', () => qa.freeze()],
+    ['Паук на мебели', () => {
+      for (let i = 0; i < 12; i++) {
+        const spider = qa.info().state.spiders.find(s => s.hp > 0 && s.on);
+        if (spider) { aimAt(spider, 1); qa.freeze(); return; }
+        qa.skip(5);
+      }
+    }],
     ['Поворот мышью вправо', () => document.dispatchEvent(new MouseEvent('mousemove', { movementX: 300, movementY: 0 }))],
     // Настоящие keydown/keyup; время прогоняется синхронно, чтобы результат не зависел от частоты кадров.
     // Мышь над кнопкой тоже вращает камеру, поэтому курс задаётся перед каждой прогулкой.
@@ -100,7 +108,7 @@ export function mountQA(root, qa) {
     const s = i.state;
     const broken = s.props.filter((p) => p.broken).length;
     info.textContent = `seed=${s.seed} x=${i.x.toFixed(2)} z=${i.z.toFixed(2)} | yaw=${i.yaw.toFixed(2)} | инструмент=${i.weaponId} | статус=${s.status} | пауков=${s.aliveSpiders}/${s.totalSpiders} | разбито=${broken} | ущерб=${s.damageRub} | t=${s.elapsed.toFixed(1)} | mood=${s.mood} | пауза=${i.paused} | active=${i.active} | keys=${i.keys} | last=${i.lastKey} | целей=${i.targets}`;
-    info.textContent += ` | моделей=${i.assets} | геометрий=${i.graphics.geometries} | текстур=${i.graphics.textures}`;
+    info.textContent += ` | моделей=${i.assets} | геометрий=${i.graphics.geometries} | текстур=${i.graphics.textures} | уровень=${s.layout.variant} | на мебели=${s.spiders.filter(p => p.hp > 0 && p.on).length} | ИИ=${[...new Set(s.spiders.filter(p => p.hp > 0).map(p => p.mode))].join(',')}`;
     panel.querySelector('[data-qa="effects"]').textContent = `FX=${i.effects.last?.weaponId || 'нет'} | частиц=${i.effects.active} | атак=${i.effects.emitted} | стоп-кадр=${i.inspectionFrame}`;
     frameId = requestAnimationFrame(render);
   };

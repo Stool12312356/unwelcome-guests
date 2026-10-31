@@ -1,7 +1,8 @@
 import * as THREE from 'three';
+import { addCityFacades } from './city-facades.js';
 
 /** Real exterior at apartment scale; no camera-facing cards. Apartment is on the third floor. */
-export function createCity(parent) {
+export function createCity(parent, assets) {
   const root = new THREE.Group();
   root.name = 'city-exterior';
   parent.add(root);
@@ -35,7 +36,8 @@ export function createCity(parent) {
   for (const z of [-11.1, -18.1]) box(trim, 0, ground + 0.02, z, 210, 0.18, 0.17);
   const buildings = [];
   function building(x, z, w, d, floors, index, distant = false) {
-    const height = floors * 2.75 + 0.5;
+    const height = floors * 3 + 0.5;
+    w = Math.round(w / 3) * 3; d = Math.round(d / 3) * 3;
     buildings.push({ x, z, width: w, depth: d, height, bottom: ground });
     const facade = distant ? farConcrete : concrete[index % concrete.length];
     box(facade, x, ground + height / 2, z, w, height, d);
@@ -43,6 +45,7 @@ export function createCity(parent) {
     box(roof, x + w * 0.15, ground + height + 0.8, z - 1, 2.3, 1.4, 1.8);
     box(trim, x - w * 0.27, ground + height + 1.25, z, 0.09, 2.5, 0.09);
     box(roof, x - w * 0.27, ground + height + 1.9, z, 1.2, 0.045, 0.045);
+    if (!distant && assets?.models.has('facade')) return;
     const columns = Math.max(3, Math.floor(w / 2.3));
     for (let floor = 0; floor < floors; floor++) {
       const y = ground + 1.7 + floor * 2.75;
@@ -75,6 +78,7 @@ export function createCity(parent) {
   [-49, -29, -9, 12, 34, 56].forEach((x, i) => building(x, -29 - (i % 2) * 4, 13 + (i % 3), 9, 4 + (i % 3), i));
   for (let i = 0; i < 9; i++) building(-91 + i * 23, -57 - (i % 3) * 5, 13 + i % 4, 12, 7 + i % 5, i + 6, true);
   for (let i = 0; i < 10; i++) building(-123 + i * 27, -103 - (i % 2) * 9, 15 + i % 6, 16, 9 + i % 7, i + 15, true);
+  addCityFacades(root, assets?.models.get('facade'), buildings, ground, materials);
   // Street furniture, parked cars and bare trees — all shared-geometry batches.
   for (let x = -66; x <= 66; x += 12) {
     box(roof, x, ground + 2.8, -19, 0.12, 5.6, 0.12);

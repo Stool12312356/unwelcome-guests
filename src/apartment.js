@@ -38,11 +38,11 @@ export function createApartment(parent, layout, assets) {
   const glow = mat(0xe4c792, { emissive: 0xffc879, emissiveIntensity: 1.8 });
   const windowGlass = mat(0xa7bbc2, { transparent: true, opacity: 0.065, depthWrite: false, roughness: 0.18, side: THREE.DoubleSide });
   const curtain = mat(0x5b534b, { side: THREE.DoubleSide, roughness: 1 });
-  const city = createCity(root);
-  const roomColors = [0xc0af94, 0x929f99, 0xa59891];
+  const city = createCity(root, assets);
+  const roomColors = layout.rooms?.map(r => r.wall) || [0xc0af94, 0x929f99, 0xa59891];
   for (let i = 0; i < 3; i++) {
     const x = -6 + i * 6;
-    const floor = surface('floor', i === 1 ? 0xa5ada8 : 0xc1ac90, [2, 4]);
+    const floor = surface('floor', layout.rooms?.[i].floor ?? (i === 1 ? 0xa5ada8 : 0xc1ac90), [2, 4]);
     floor.roughness = 0.82;
     box(floor, x, -0.07, 0, 6, 0.14, 12, false);
     box(ceiling, x, 3.06, 0, 6, 0.12, 12, false);
@@ -101,10 +101,11 @@ export function createApartment(parent, layout, assets) {
     box(paintedTrim, wall.x, 0.09, wall.z, wall.width + 0.075, 0.18, wall.depth);
     box(paintedTrim, wall.x, 2.92, wall.z, wall.width + 0.07, 0.12, wall.depth);
   }
-  for (const x of [-3, 3]) {
-    for (const z of [-1.22, 1.22]) box(trim, x, 1.35, z, 0.3, 2.7, 0.1);
-    box(trim, x, 2.7, 0, 0.3, 0.12, 2.54);
-    box(paintedTrim, x, 2.87, 0, 0.23, 0.24, 2.4);
+  for (const door of layout.doors || [{ x: -3, z: 0, width: 2.4 }, { x: 3, z: 0, width: 2.4 }]) {
+    const { x, z, width } = door;
+    for (const side of [-1, 1]) box(trim, x, 1.35, z + side * (width / 2 + 0.02), 0.3, 2.7, 0.1);
+    box(trim, x, 2.7, z, 0.3, 0.12, width + 0.14);
+    box(paintedTrim, x, 2.87, z, 0.23, 0.24, width);
   }
   const ambient = new THREE.HemisphereLight(0xa8bdca, 0x4b3827, 0.4);
   root.add(ambient);

@@ -19,11 +19,13 @@ test('численный допуск симметричен для стен и 
   const state = createSimulation({ seed: 1 }).getState();
   for (const [x, z, dx, dz] of [[8.68, 0, 1, 0], [-8.68, 0, -1, 0], [-6, 5.68, 0, 1], [-6, -5.68, 0, -1]]) {
     // South contact must be checked in a location without the sofa.
-    const px = z > 0 ? -8.5 : x;
-    assert.equal(canOccupy(state, px + dx * 3e-14, z + dz * 3e-14), true);
-    assert.equal(canOccupy(state, px + dx * 1e-6, z + dz * 1e-6), false);
+    const px = z !== 0 ? -8.68 : x;
+    const empty = { ...state, props: [] }; // Wall precision is independent of generated furniture.
+    assert.equal(canOccupy(empty, px + dx * 3e-14, z + dz * 3e-14), true);
+    assert.equal(canOccupy(empty, px + dx * 1e-6, z + dz * 1e-6), false);
   }
-  const prop = state.props[0];
+  const prop = { ...state.props[0], x: 0, z: 0 };
+  state.props = [prop];
   const contact = prop.x + prop.width / 2 + 0.22;
   assert.equal(canOccupy(state, contact - 3e-14, prop.z), true);
   assert.equal(canOccupy(state, contact - 1e-6, prop.z), false);

@@ -73,7 +73,7 @@ export function createWorld(THREE, scene, initialState, assets = null) {
     const imported = assets?.models.get(prop.kind);
     if (imported) {
       const envelope = prop.kind === 'tv' ? { width: w, height: h - 0.4, depth: d } : prop;
-      const model = fitModel(imported, envelope, { rotation: prop.z > 0 ? Math.PI : 0 });
+      const model = fitModel(imported, envelope, { rotation: prop.yaw ?? (prop.z > 0 ? Math.PI : 0) });
       if (prop.kind === 'tv') {
         model.position.y = -h / 2 + 0.4;
         box(group, palette.darkWood, 0, -h / 2 + 0.37, 0, w, 0.06, d);
@@ -165,6 +165,7 @@ export function createWorld(THREE, scene, initialState, assets = null) {
       group.add(leg);
       legs.push({ leg, index, side });
     }
+    group.scale.setScalar(0.5);
     markTarget(group, spider.id);
     root.add(group);
     return { group, legs, lastX: spider.x, lastZ: spider.z, phase: spiders.size * 1.7 };
@@ -270,7 +271,7 @@ export function createWorld(THREE, scene, initialState, assets = null) {
     previousElapsed = state.elapsed;
     previousDamage = state.damageRub;
     time += dt;
-    const nextLayoutKey = JSON.stringify(state.layout.walls);
+    const nextLayoutKey = JSON.stringify(state.layout);
     if (nextLayoutKey !== layoutKey) {
       buildArchitecture(state);
       layoutKey = nextLayoutKey;
