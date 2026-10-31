@@ -1,0 +1,22 @@
+# Dependencies and production output
+node_modules/
+dist/
+
+# Logs and local tool state
+*.log
+.sharrowkin/
+
+# Operating system metadata
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Editor settings and temporary files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
